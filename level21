@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribute to [Person's Name]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        section {
+            padding: 2rem;
+            max-width: 900px;
+            margin: auto;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .intro img {
+            width: 200px;
+            height: auto;
+            border-radius: 50%;
+        }
+        .qualities, .biography {
+            margin-bottom: 2rem;
+        }
+        .qualities h2, .biography h2 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+        .qualities p, .biography p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tribute to [Person's Name]</h1>
+    </header>
+    
+    <section class="intro">
+        <img src="[person-image.jpg]" alt="[Person's Name]">
+        <p>A brief introduction about the person you admire. This section provides a quick overview of who they are and why they are admirable.</p>
+    </section>
+    
+    <section class="qualities">
+        <h2>Admirable Qualities</h2>
+        <p>1. Quality One - Describe this quality and provide examples or anecdotes that illustrate it.</p>
+        <p>2. Quality Two - Describe this quality and provide examples or anecdotes that illustrate it.</p>
+        <p>3. Quality Three - Describe this quality and provide examples or anecdotes that illustrate it.</p>
+    </section>
+    
+    <section class="biography">
+        <h2>Biography</h2>
+        <p>Provide a brief biography of the person, including their background, achievements, and significant moments in their life. This section helps to paint a fuller picture of why they are worthy of admiration.</p>
+    </section>
+    
+    <footer>
+        <p>&copy; 2024 Tribute to [Person's Name]. All rights reserved.</p>
+    </footer>
+</body>
+</html>
