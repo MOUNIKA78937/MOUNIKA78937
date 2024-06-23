@@ -1,0 +1,208 @@
+[8:33 PM, 6/23/2024] Mouni: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribute to [Person's Name]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        section {
+            padding: 2rem;
+            max-width: 900px;
+            margin: auto;
+        }
+        .intro {
+            text-alig…
+[8:34 PM, 6/23/2024] Mouni: https://github.com/MOUNIKA78937/MOUNIKA78937/blob/fbe7af7036383ca4eca7f2f8a8f9f684c3c02a39/level21
+[8:38 PM, 6/23/2024] Mouni: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Board</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        // Simulate backend with Express and MongoDB
+        const express = require('express');
+        const mongoose = require('mongoose');
+        const bcrypt = require('bcryptjs');
+        const jwt = require('jsonwebtoken');
+        const cors = require('cors');
+        const dotenv = require('dotenv');
+        const { MongoMemoryServer } = require('mongodb-memory-server');
+
+        dotenv.config();
+
+        const app = express();
+        app.use(cors());
+        app.use(express.json());
+
+        const mongod = new MongoMemoryServer();
+        let User, Job;
+
+        async function connectDB() {
+            const uri = await mongod.getUri();
+            mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+            const userSchema = new mongoose.Schema({
+                name: String,
+                email: { type: String, unique: true },
+                password: String,
+                role: { type: String, enum: ['employer', 'candidate'], default: 'candidate' }
+            });
+
+            userSchema.pre('save', async function (next) {
+                if (!this.isModified('password')) return next();
+                const salt = await bcrypt.genSalt(10);
+                this.password = await bcrypt.hash(this.password, salt);
+                next();
+            });
+
+            const jobSchema = new mongoose.Schema({
+                title: String,
+                description: String,
+                company: String,
+                location: String,
+                postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+            });
+
+            User = mongoose.model('User', userSchema);
+            Job = mongoose.model('Job', jobSchema);
+        }
+
+        connectDB();
+
+        app.post('/api/auth/register', async (req, res) => {
+            const { name, email, password, role } = req.body;
+            try {
+                const user = new User({ name, email, password, role });
+                await user.save();
+                res.status(201).json({ message: 'User registered' });
+            } catch (err) {
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        app.post('/api/auth/login', async (req, res) => {
+            const { email, password } = req.body;
+            try {
+                const user = await User.findOne({ email });
+                if (!user) throw new Error('User not found');
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (!isMatch) throw new Error('Invalid credentials');
+                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                res.json({ token });
+            } catch (err) {
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        app.post('/api/jobs', async (req, res) => {
+            const { title, description, company, location, postedBy } = req.body;
+            try {
+                const job = new Job({ title, description, company, location, postedBy });
+                await job.save();
+                res.status(201).json({ message: 'Job posted' });
+            } catch (err) {
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        app.get('/api/jobs', async (req, res) => {
+            try {
+                const jobs = await Job.find().populate('postedBy', 'name');
+                res.json(jobs);
+            } catch (err) {
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        app.listen(5000, () => console.log('Backend running on http://localhost:5000'));
+
+        // Frontend with React
+        function App() {
+            const [jobs, setJobs] = React.useState([]);
+            const [form, setForm] = React.useState({ name: '', email: '', password: '', role: 'candidate' });
+            const [jobForm, setJobForm] = React.useState({ title: '', description: '', company: '', location: '', postedBy: '' });
+
+            React.useEffect(() => {
+                fetch('http://localhost:5000/api/jobs')
+                    .then(response => response.json())
+                    .then(data => setJobs(data));
+            }, []);
+
+            const register = async () => {
+                await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(form)
+                });
+            };
+
+            const postJob = async () => {
+                await fetch('http://localhost:5000/api/jobs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jobForm)
+                });
+                fetch('http://localhost:5000/api/jobs')
+                    .then(response => response.json())
+                    .then(data => setJobs(data));
+            };
+
+            return (
+                <div>
+                    <h1>Job Board</h1>
+                    <h2>Register</h2>
+                    <input placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                    <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                    <input placeholder="Password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+                    <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
+                        <option value="candidate">Candidate</option>
+                        <option value="employer">Employer</option>
+                    </select>
+                    <button onClick={register}>Register</button>
+                    <h2>Post a Job</h2>
+                    <input placeholder="Title" value={jobForm.title} onChange={e => setJobForm({ ...jobForm, title: e.target.value })} />
+                    <input placeholder="Description" value={jobForm.description} onChange={e => setJobForm({ ...jobForm, description: e.target.value })} />
+                    <input placeholder="Company" value={jobForm.company} onChange={e => setJobForm({ ...jobForm, company: e.target.value })} />
+                    <input placeholder="Location" value={jobForm.location} onChange={e => setJobForm({ ...jobForm, location: e.target.value })} />
+                    <input placeholder="Posted By (User ID)" value={jobForm.postedBy} onChange={e => setJobForm({ ...jobForm, postedBy: e.target.value })} />
+                    <button onClick={postJob}>Post Job</button>
+                    <h2>Job Listings</h2>
+                    {jobs.map(job => (
+                        <div key={job._id}>
+                            <h3>{job.title}</h3>
+                            <p>{job.description}</p>
+                            <p>{job.company} - {job.location}</p>
+                            <p>Posted by: {job.postedBy.name}</p>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+</body>
+</html>
