@@ -1,0 +1,66 @@
+# Command-line To-Do List application in Python
+
+tasks = []
+
+def add_task(title, description, due_date):
+    tasks.append({
+        'title': title,
+        'description': description,
+        'due_date': due_date,
+        'completed': False
+    })
+    print("Task added successfully!")
+
+def list_tasks():
+    if not tasks:
+        print("No tasks in the list.")
+    else:
+        print("---- Your To-Do List ----")
+        for index, task in enumerate(tasks, start=1):
+            status = 'Completed' if task['completed'] else 'Pending'
+            print(f"{index}. {task['title']} - Due: {task['due_date']} - Status: {status}")
+
+def complete_task(task_index):
+    if 1 <= task_index <= len(tasks):
+        tasks[task_index - 1]['completed'] = True
+        print("Task marked as completed.")
+    else:
+        print("Invalid task index.")
+
+def delete_task(task_index):
+    if 1 <= task_index <= len(tasks):
+        del tasks[task_index - 1]
+        print("Task deleted successfully.")
+    else:
+        print("Invalid task index.")
+
+# Example usage:
+while True:
+    print("\nCOMMANDS:")
+    print("1. Add Task")
+    print("2. List Tasks")
+    print("3. Complete Task")
+    print("4. Delete Task")
+    print("5. Exit")
+
+    choice = input("Enter your choice (1-5): ")
+
+    if choice == '1':
+        title = input("Enter task title: ")
+        description = input("Enter task description: ")
+        due_date = input("Enter due date (YYYY-MM-DD): ")
+        add_task(title, description, due_date)
+    elif choice == '2':
+        list_tasks()
+    elif choice == '3':
+        task_index = int(input("Enter task index to mark as completed: "))
+        complete_task(task_index)
+    elif choice == '4':
+        task_index = int(input("Enter task index to delete: "))
+        delete_task(task_index)
+    elif choice == '5':
+        print("Exiting program. Goodbye!")
+        break
+    else:
+        print("Invalid choice. Please enter a number from 1 to 5.")
+        
