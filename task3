@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .display {
+            grid-column: span 4;
+            background-color: #222;
+            color: white;
+            font-size: 2em;
+            text-align: right;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .button {
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #ddd;
+        }
+        .button.operator {
+            background-color: #ff9500;
+            color: white;
+        }
+        .button.operator:hover {
+            background-color: #e08900;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <button class="button" data-value="7">7</button>
+        <button class="button" data-value="8">8</button>
+        <button class="button" data-value="9">9</button>
+        <button class="button operator" data-value="/">/</button>
+        <button class="button" data-value="4">4</button>
+        <button class="button" data-value="5">5</button>
+        <button class="button" data-value="6">6</button>
+        <button class="button operator" data-value=""></button>
+        <button class="button" data-value="1">1</button>
+        <button class="button" data-value="2">2</button>
+        <button class="button" data-value="3">3</button>
+        <button class="button operator" data-value="-">-</button>
+        <button class="button" data-value="0">0</button>
+        <button class="button" data-value=".">.</button>
+        <button class="button operator" data-value="=">=</button>
+        <button class="button operator" data-value="+">+</button>
+        <button class="button" id="clear" data-value="clear" style="grid-column: span 4; background-color: #ff3b30; color: white;">Clear</button>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('.button');
+        let currentInput = '';
+        let operator = '';
+        let previousInput = '';
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.getAttribute('data-value');
+
+                if (value === 'clear') {
+                    currentInput = '';
+                    operator = '';
+                    previousInput = '';
+                    display.textContent = '0';
+                } else if (value === '=') {
+                    if (currentInput && operator && previousInput) {
+                        currentInput = eval(${previousInput} ${operator} ${currentInput}).toString();
+                        display.textContent = currentInput;
+                        previousInput = '';
+                        operator = '';
+                    }
+                } else if (['+', '-', '*', '/'].includes(value)) {
+                    if (currentInput) {
+                        operator = value;
+                        previousInput = currentInput;
+                        currentInput = '';
+                    }
+                } else {
+                    currentInput += value;
+                    display.textContent = currentInput;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
